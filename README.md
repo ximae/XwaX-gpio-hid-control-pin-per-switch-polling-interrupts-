@@ -1,4 +1,3 @@
-# XwaX-Gpio-hid-control-binary-encoded-
 
 interface control program for xwax. It uses the gpios available in the odroic c1 or c2 to connect switch buttons and a rotary to inject keypresses for the program interface control. This version uses a one pin per switch configuration and due to the odroids interrupt limitations in the gpio, a mix of polling and interrupt driver functions.
 

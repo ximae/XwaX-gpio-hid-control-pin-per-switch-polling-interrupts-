@@ -63,6 +63,19 @@ PI_THREAD (rotary_loop) {
 }
 
 
+/* pendrive mount and rescan function */
+
+
+void penmount(void) {
+  system("umount /dev/sda1");	    
+   sleep(1);
+  system("mount /dev/sda1 /media/odroid/usbdrive");
+   sleep(1);
+  send_CST();
+   sleep(1);
+}
+
+
 /* myInterrupts functions */
 
 
@@ -251,9 +264,7 @@ void myInterrupt12 (void) {
 }
 
 
-
-
-/*
+ /*
  *********************************************************************************
  * main
  *********************************************************************************

@@ -29,6 +29,7 @@
 #include <fcntl.h>
 #include "rotaryencoder.h"
 #include "config.h"
+#include "keysend.h"
 
 
 #define	DEBOUNCE_TIME	200
@@ -45,6 +46,9 @@
 
 
 PI_THREAD (rotary_loop) {
+
+struct encoder *encoder = setupencoder(rot1_pin_a,rot1_pin_b);
+long value;
 
  while (1) {
 
@@ -318,9 +322,6 @@ pullUpDnControl(sf2,PUD_DOWN);
 pullUpDnControl(sf5,PUD_DOWN);
 pullUpDnControl(cst,PUD_DOWN);
 pullUpDnControl(ctab,PUD_DOWN);
-
-struct encoder *encoder = setupencoder(rot1_pin_a,rot1_pin_b);
-long value;
 
 int a[24];
 int i = 0;

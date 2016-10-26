@@ -13,7 +13,7 @@
  *
  * compile:
  *
- * gcc -Wall -o keycontrol keycontrol.c rotaryencoder.c keysend.c -lwiringPi -lpthread
+ * gcc -Wall -o xwaxcontrol xwaxcontrol.c rotaryencoder.c keysend.c -lwiringPi -lpthread
  *
  */
 

@@ -87,7 +87,7 @@ void myInterrupt0 (void) {
       }
    else { 
          send_F1() ;
-         delay(100);
+         delay(200);
         }
    while (digitalRead (f1) == HIGH) {
       delay (1) ;
@@ -103,7 +103,7 @@ void myInterrupt1 (void) {
       }
    else {
          send_F2();
-         delay(100);
+         delay(200);
         }
    while (digitalRead (f2) == HIGH) {
       delay (1) ;
@@ -119,7 +119,7 @@ void myInterrupt2 (void) {
       }
    else { 
          send_F3() ;
-         delay(100);
+         delay(200);
         }
    while (digitalRead (f3) == HIGH) {
       delay (1) ;
@@ -134,7 +134,7 @@ void myInterrupt3 (void) {
 	debounceTime = millis () + DEBOUNCE_TIME ;
       }
    else { send_F5() ;
-          delay(100); 
+          delay(200); 
         }
    while (digitalRead (f5) == HIGH) {
       delay (1) ;
@@ -150,7 +150,7 @@ void myInterrupt4 (void) {
       }
    else {
          send_F6() ;
-         delay(100); 
+         delay(200); 
         }
    while (digitalRead (f6) == HIGH) {
       delay (1) ;
@@ -166,7 +166,7 @@ void myInterrupt5 (void) {
       }
    else {
          send_F7();
-         delay(100);
+         delay(200);
         }
    while (digitalRead (f7) == HIGH) {
       delay (1) ;
@@ -204,7 +204,10 @@ void myInterrupt8 (void) {
       {
 	debounceTime = millis () + DEBOUNCE_TIME ;
       }
-   else send_SF2() ;
+   else { 
+	   send_SF2() ;
+	   delay (200);
+        }  
    while (digitalRead (sf2) == HIGH) {
       delay (1) ;
       debounceTime = millis () + DEBOUNCE_TIME ;
@@ -217,7 +220,10 @@ void myInterrupt9 (void) {
       {
 	debounceTime = millis () + DEBOUNCE_TIME ;
       }
-   else send_SF5() ; 
+   else {
+	   send_SF5() ;
+	   delay(200);
+        }  
    while (digitalRead (sf5) == HIGH) {
       delay (1) ;
       debounceTime = millis () + DEBOUNCE_TIME ;
@@ -230,7 +236,10 @@ void myInterrupt10 (void) {
       {
 	debounceTime = millis () + DEBOUNCE_TIME ;
       }
-   else  penmount() ;
+   else  {
+	   penmount() ;
+	   delay(200);
+         } 
    while (digitalRead (cst) == HIGH) {
       delay (1) ;
       debounceTime = millis () + DEBOUNCE_TIME ;
@@ -272,7 +281,7 @@ void myInterrupt12 (void) {
 
 int main (void) {
 
-//setup devices
+//setup devices struct annd array
 
 if ((uinp_fd = setup_uinput_device()) < 0) {
    printf("Unable to find uinput device\n");
@@ -282,7 +291,6 @@ if ((uinp_fd = setup_uinput_device()) < 0) {
   wiringPiSetup() ;
   
   sleep(3);
-
 
    wiringPiISR (f1, INT_EDGE_FALLING, myInterrupt0);
    wiringPiISR (f2, INT_EDGE_FALLING, myInterrupt1);
@@ -311,38 +319,6 @@ pullUpDnControl(sf5,PUD_DOWN);
 pullUpDnControl(cst,PUD_DOWN);
 pullUpDnControl(ctab,PUD_DOWN);
 
-/* Alternate actions config 
-
-   pinMode (up, INPUT) ;
-   pinMode (down, INPUT) ;
-   pinMode (f9, INPUT) ;
-   pinMode (f10, INPUT) ;
-   pinMode (f11, INPUT) ;
-   pinMode (cf11, INPUT) ;
-   pinMode (sf3, INPUT) ;
-   pinMode (sf7, INPUT) ;
-   pinMode (sf9, INPUT) ;
-   pinMode (sf10, INPUT) ;
-
-
-
- pullUpDnControl(up,PUD_DOWN);
- pullUpDnControl(down,PUD_DOWN);
- pullUpDnControl(f1,PUD_DOWN);
- pullUpDnControl(f2,PUD_DOWN);
- pullUpDnControl(f5,PUD_DOWN);
- pullUpDnControl(f6,PUD_DOWN);
- pullUpDnControl(f9,PUD_DOWN);
- pullUpDnControl(f10,PUD_DOWN);
- pullUpDnControl(f11,PUD_DOWN);
- pullUpDnControl(cf11,PUD_DOWN);
- pullUpDnControl(sf3,PUD_DOWN);
- pullUpDnControl(sf7,PUD_DOWN);
- pullUpDnControl(sf9,PUD_DOWN);
- pullUpDnControl(sf10,PUD_DOWN);
-
-*/
-
 struct encoder *encoder = setupencoder(rot1_pin_a,rot1_pin_b);
 long value;
 
@@ -369,27 +345,6 @@ while  ( a >= 0 ) {
      a[7] = digitalRead(sf5);
      a[8] = digitalRead(cst); 
      
-
-   /* alternate pin readings
-
-     a[9] = digitalRead(f1);
-     a[10] = digitalRead(f2);
-     a[11] = digitalRead(f5);
-     a[12] = digitalRead(f6);
-     a[13] = digitalRead(f9);
-     a[14] = digitalRead(f10);
-     a[15] = digitalRead(f11);
-     a[16] = digitalRead(cf11);
-     a[17] = digitalRead(sf3);
-     a[18] = digitalRead(sf7);
-     a[19] = digitalRead(sf9);
-     a[20] = digitalRead(sf10);
-     a[21] = digitalRead(ctab);
-     a[22] = digitalRead(up);
-     a[23] = digitalRead(down);
-     
-   */
-
    if ( a[0] > 0 ) {
      myInterrupt6();
      a[0]= 0;
@@ -441,3 +396,80 @@ while  ( a >= 0 ) {
 return 0;  
 
 }
+
+
+/***************************************************************************************************************
+*                                                                                                              *
+*  Alternate options for configuring the program depending on what setup and actions you want xwax to preform  *
+*                                                                                                              *
+****************************************************************************************************************/
+
+/* Alternate actions pin config 
+
+   pinMode (up, INPUT) ;
+   pinMode (down, INPUT) ;
+   pinMode (f1, INPUT) ;
+   pinMode (f2, INPUT) ;
+   pinMode (f5, INPUT) ;
+   pinMode (f6, INPUT) ;
+   pinMode (f9, INPUT) ;
+   pinMode (f10, INPUT) ;
+   pinMode (f11, INPUT) ;
+   pinMode (cf11, INPUT) ;
+   pinMode (sf3, INPUT) ;
+   pinMode (sf7, INPUT) ;
+   pinMode (sf9, INPUT) ;
+   pinMode (sf10, INPUT) ;
+
+ pullUpDnControl(up,PUD_DOWN);
+ pullUpDnControl(down,PUD_DOWN);
+ pullUpDnControl(f1,PUD_DOWN);
+ pullUpDnControl(f2,PUD_DOWN);
+ pullUpDnControl(f5,PUD_DOWN);
+ pullUpDnControl(f6,PUD_DOWN);
+ pullUpDnControl(f9,PUD_DOWN);
+ pullUpDnControl(f10,PUD_DOWN);
+ pullUpDnControl(f11,PUD_DOWN);
+ pullUpDnControl(cf11,PUD_DOWN);
+ pullUpDnControl(sf3,PUD_DOWN);
+ pullUpDnControl(sf7,PUD_DOWN);
+ pullUpDnControl(sf9,PUD_DOWN);
+ pullUpDnControl(sf10,PUD_DOWN);
+
+*/
+
+/* alternate pin readings
+     
+     a[9] = digitalRead(up);
+     a[10] = digitalRead(down);
+     a[11] = digitalRead(f1);
+     a[12] = digitalRead(f2);
+     a[13] = digitalRead(f5);
+     a[14] = digitalRead(f6);
+     a[15] = digitalRead(f9);
+     a[16] = digitalRead(f10);
+     a[17] = digitalRead(f11);
+     a[18] = digitalRead(cf11);
+     a[19] = digitalRead(sf3);
+     a[20] = digitalRead(sf7);
+     a[21] = digitalRead(sf9);
+     a[22] = digitalRead(sf10);
+     a[23] = digitalRead(ctab);
+     
+*/
+
+/* alternate interrupt functions
+   
+   wiringPiISR (left, INT_EDGE_FALLING, myInterrupt6);
+   wiringPiISR (right, INT_EDGE_FALLING, myInterrupt7);
+   wiringPiISR (f3, INT_EDGE_FALLING, myInterrupt2);
+   wiringPiISR (f7, INT_EDGE_FALLING, myInterrupt5);
+   wiringPiISR (cf3, INT_EDGE_FALLING, myInterrupt11);
+   wiringPiISR (cf7, INT_EDGE_FALLING, myInterrupt12);
+   wiringPiISR (sf2, INT_EDGE_FALLING, myInterrupt8);
+   wiringPiISR (sf5, INT_EDGE_FALLING, myInterrupt9);
+   wiringPiISR (cst, INT_EDGE_FALLING, myInterrupt10);
+   .....
+   
+*/   
+   

@@ -15,7 +15,9 @@ How to test:
     
     So compile & run this program (via sudo):
     
-    sudo ./xwaxcont
+    gcc -Wall -o xwaxcontrol xwaxcontrol.c rotaryencoder.c keysend.c -lwiringPi -lpthread
+    
+    sudo ./xwaxcontrol
     
     then in another terminal:
      

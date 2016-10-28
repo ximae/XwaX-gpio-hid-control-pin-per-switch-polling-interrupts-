@@ -26,6 +26,7 @@
 #include <linux/uinput.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include <time.h>
 #include <fcntl.h>
 #include "rotaryencoder.h"
 #include "config.h"
@@ -88,6 +89,8 @@ PI_THREAD (record) {
   strcat(command , ".wav");
 
   system(command);
+  
+  return 0;
 
 } 
 

@@ -13,7 +13,7 @@
  *
  * compile:
  *
- * gcc -Wall -o xwaxcontrol xwaxcontrol.c rotaryencoder.c keysend.c -lwiringPi -lpthread
+ * gcc -Wall -o keycontrol keycontrol.c rotaryencoder.c keysend.c -lwiringPi -lpthread
  *
  */
 
@@ -66,6 +66,30 @@ long value;
   }
 }
 
+/* experimental set recorder thread */
+
+PI_THREAD (record) {
+
+   time_t rawtime;
+   struct tm *info;
+
+   char filename[80];
+   char command[100];
+
+   time( &rawtime );
+
+   info = localtime( &rawtime );
+   strftime(filename, 80, "%d_%m_%Y__%H_%M_%S", info);
+
+  strcpy( command, "arecord -D T6_pair3 -f dat -V " );
+  
+  strcat(command , filename);
+  
+  strcat(command , ".wav");
+
+  system(command);
+
+} 
 
 /* pendrive mount and rescan function */
 
@@ -390,6 +414,52 @@ while  ( a >= 0 ) {
      myInterrupt10();
      a[8]= 0;
     } 
+     
+    /* Experimental switch combinations for extra functions * 
+     *                                                      *
+     *        rescan + f3 + f7 = system shutdown            *
+     *        up + down = screen keyboard (install onboard) *
+     *        clone 1 + clone 2 + f3 = record on pair 3     *
+     *        clone 1 + clone 2 + f7 = relaunch xwax        *
+     *        clone 1 + f3 = toggle deck 1 control type     *
+     *        clone 2 + f7 = toggle deck 2 control type     *
+     *                                                      *
+     ********************************************************/
+
+
+    if ( a[8] > 0 && a[2] > 0 &&  a[3] > 0 ) {
+      system("shutdown -P now");
+      a[8] = a[2] = a[3] = 0;
+     } 
+
+    if ( a [0] > 0 && a [1] > 0) {
+       system("onboard");
+       a[0] = a [1] = 0;
+     }
+     
+    if ( a[6] > 0 && a[7] > 0 && a[2] > 0  ) {
+      system("pkill xwax");  
+      piThreadCreate (record) ;
+      a[6] = a[7] = a[2] = 0;
+     }
+
+    if ( a[6] > 0 && a[7] > 0 && a[3] > 0  ) {
+      system ("pkill arecord");
+      system ("./home/odroid/Scripts/startxwax");
+      a[6] = a[7] = a[3] = 0;
+     }
+
+    if ( a[2] > 0 && a[6] > 0 ) {
+      send_CF3();
+      a[2] = a[6] = 0;
+     }
+
+    if ( a[3] > 0 && a[7] > 0 ) {
+      send_CF7();
+      a[3] = a[7] = 0;
+     }
+
+     /* end of experimental swicth combinations */
 
    usleep(10000);
   }

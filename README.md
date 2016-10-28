@@ -11,10 +11,14 @@ IF it is going to be used in a rpi, you can modify the program fora pure interru
 
 
 How to test:
- 	  Use the SoC's pull-up and pull down resistors that are avalable	on input pins. So compile & run this program (via sudo), then
- 	in another terminal:
-  
-    sudo ./xwaxcontrol      
+ 	  Use the SoC's pull-up and pull down resistors that are avalable	on input pins. 
+    
+    So compile & run this program (via sudo):
+    
+    sudo ./xwaxcont
+    
+    then in another terminal:
+     
  	 	gpio mode 0 up
  	 	gpio mode 0 down
  	

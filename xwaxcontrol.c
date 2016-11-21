@@ -82,11 +82,11 @@ PI_THREAD (record) {
    info = localtime( &rawtime );
    strftime(filename, 80, "%d_%m_%Y__%H_%M_%S", info);
 
-  strcpy( command, "lxterminal --command="arecord -f dat -D T6_pair1  --vumeter=stereo " );" 
+  strcpy( command, "arecord -f dat -D T6_pair1  --vumeter=stereo " );
   
   strcat(command , filename);
   
-  strcat(command , ".wav" --working-directory="/home/odroid/music/"");
+  strcat(command , ".wav");
 
   system(command);
   
@@ -267,10 +267,7 @@ void myInterrupt10 (void) {
       {
 	debounceTime = millis () + DEBOUNCE_TIME ;
       }
-   else  {
-	   penmount() ;
-	   delay(200);
-         } 
+
    while (digitalRead (cst) == HIGH) {
       delay (1) ;
       debounceTime = millis () + DEBOUNCE_TIME ;
@@ -337,7 +334,7 @@ if ((uinp_fd = setup_uinput_device()) < 0) {
    pinMode (sf2, INPUT) ;
    pinMode (sf5, INPUT) ;
    pinMode (cst, INPUT) ;
-   pinMode (ctab, INPUT) ;
+   
 
 pullUpDnControl(left,PUD_DOWN);
 pullUpDnControl(right,PUD_DOWN);
@@ -348,7 +345,7 @@ pullUpDnControl(cf7,PUD_DOWN);
 pullUpDnControl(sf2,PUD_DOWN);
 pullUpDnControl(sf5,PUD_DOWN);
 pullUpDnControl(cst,PUD_DOWN);
-pullUpDnControl(ctab,PUD_DOWN);
+
 
 int a[24];
 int i = 0;
@@ -375,22 +372,26 @@ while  ( a >= 0 ) {
      
    if ( a[0] > 0 ) {
      myInterrupt6();
-     a[0]= 0;
+     if ( a[8] > 0) { a[0] = a[0]; }
+     else { a[0]= 0; }
     }
 
     if ( a[1] > 0 ) {
      myInterrupt7();
-     a[1]= 0;
+     if ( a[8] > 0) { a[1] = a[1]; }
+     else { a[1]= 0; }
     }
 
    if ( a[2] > 0) {
       myInterrupt2();
-      a[2] = 0;    
+      if ( a[8] > 0) { a[2] = a[2]; }
+      else { a[2]= 0; }
     }
 
    if ( a[3]> 0 ) {
      myInterrupt5();
-     a[3] = 0;
+     if ( a[8] > 0) { a[3] = a[3]; }
+     else { a[3]= 0; }
     } 
 
    if ( a[4]> 0) {
@@ -405,29 +406,32 @@ while  ( a >= 0 ) {
    
    if ( a[6] > 0 ) {
     myInterrupt8();
-     a[6]= 0;
+     if ( a[8] > 0) { a[6] = a[6]; }
+     else { a[6]= 0; }
     }
 
     if ( a[7] > 0 ) {
      myInterrupt9();
-     a[7]= 0;
+     if ( a[8] > 0) { a[7] = a[7]; }
+     else { a[7]= 0; }
     }
 
     if ( a[8] > 0 ) {
      myInterrupt10();
-     a[8]= 0;
+     
     } 
      
-    /* Experimental switch combinations for extra functions * 
-     *                                                      *
-     *        rescan + f3 + f7 = system shutdown            *
-     *        up + down = screen keyboard (install onboard) *
-     *        clone 1 + clone 2 + f3 = record on pair 3     *
-     *        clone 1 + clone 2 + f7 = relaunch xwax        *
-     *        UP + f3 = toggle deck 1 control type          *
-     *        UP + f7 = toggle deck 2 control type          *
-     *                                                      *
-     ********************************************************/
+    /* Experimental switch combinations for extra functions ****** 
+     *                                                           *
+     *         rescan + f3 + f7 = system shutdown                *
+     *         rescan + right = screen keyboard (install onboard)*
+     *         rescan + left = rescan                            *        
+     *         rescan + clone 1  = record on pair 3              *
+     *         rescan + clone 2 = relaunch xwax                  *
+     *         rescan + f3 = toggle deck 1 control type          *
+     *         rescan + f7 = toggle deck 2 control type          *
+     *                                                           *
+     *************************************************************/
 
 
     if ( a[8] > 0 && a[2] > 0 &&  a[3] > 0 ) {
@@ -436,36 +440,42 @@ while  ( a >= 0 ) {
       a[8] = a[2] = a[3] = 0;
      } 
 
-    if ( a [0] > 0 && a [1] > 0) {
+    if ( a[8] > 0 && a[1] > 0 ) {
        system("onboard");
        delay(200);
-       a[0] = a [1] = 0;
+       a[8] = a[1] = 0;
      }
-     
-    if ( a[6] > 0 && a[7] > 0 && a[2] > 0  ) {
+
+    if ( a[8] > 0 && a[0] > 0 ) {
+       penmount():
+       delay(200);
+       a[8] = a[0] = 0;
+     }
+
+    if ( a[8] > 0 && a[6] > 0 ) {
       system("pkill xwax");  
       piThreadCreate (record) ;
       delay(200);
-      a[6] = a[7] = a[2] = 0;
+      a[8] = a[6] = 0;
      }
 
-    if ( a[6] > 0 && a[7] > 0 && a[3] > 0  ) {
+    if ( a[8] > 0 && a[7] > 0 ) {
       system ("pkill arecord");
       system ("./home/odroid/Scripts/startxwax");
       delay(200);
-      a[6] = a[7] = a[3] = 0;
+      a[8] = a[7] = 0;
      }
 
-    if ( a[0] > 0 && a[6] > 0 ) {
+    if ( a[8] > 0 && a[2] > 0 ) {
       send_CF3();
       delay(200);
-      a[0] = a[6] = 0;
+      a[8] = a[2] = 0;
      }
 
-    if ( a[0] > 0 && a[7] > 0 ) {
+    if ( a[8] > 0 && a[3] > 0 ) {
       send_CF7();
       delay(200);
-      a[0] = a[7] = 0;
+      a[8] = a[3] = 0;
      }
 
      /* end of experimental swicth combinations */
@@ -486,6 +496,7 @@ return 0;
 
 /* Alternate actions pin config 
 
+   pinMode (ctab, INPUT) ;
    pinMode (up, INPUT) ;
    pinMode (down, INPUT) ;
    pinMode (f1, INPUT) ;
@@ -500,7 +511,8 @@ return 0;
    pinMode (sf7, INPUT) ;
    pinMode (sf9, INPUT) ;
    pinMode (sf10, INPUT) ;
-
+ 
+ pullUpDnControl(ctab,PUD_DOWN);
  pullUpDnControl(up,PUD_DOWN);
  pullUpDnControl(down,PUD_DOWN);
  pullUpDnControl(f1,PUD_DOWN);
